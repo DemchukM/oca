@@ -10,7 +10,6 @@ class TestCreatePickingAndPutProductPackage(common.TransactionCase):
         self.stock_location = self.env["stock.location"]
         self.stock_picking_type = self.env["stock.picking.type"]
         self.stock_picking_type_pack = self.env.ref("stock.picking_type_internal")
-        self.stock_picking_type_pack.pack_operation_ids.unlink()
         self.stock_picking_type_pack.write(
             {
                 "code": "internal",
