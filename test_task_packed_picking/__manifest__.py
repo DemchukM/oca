@@ -1,7 +1,7 @@
 {
     "name": "Test Task Packed Picking",
     "summary": "Test Task Packed Picking",
-    "version": "16.0.0.0.1",
+    "version": "16.0.0.0.2",
     "website": "https://github.com/demchukm/mymodule",
     "author": "demchukm",
     "category": "Test",
