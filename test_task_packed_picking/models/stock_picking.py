@@ -65,6 +65,7 @@ class StockPicking(models.Model):
                 "name": product.name,
                 "product_id": product.id,
                 "product_uom_qty": qty_done,
+                "quantity_done": qty_done,
                 "product_uom": product.uom_id.id,
                 "location_id": location.id,
                 "location_dest_id": location_dest_id.id,

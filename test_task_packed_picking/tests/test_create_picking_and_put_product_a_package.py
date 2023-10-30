@@ -1,6 +1,7 @@
-from odoo.tests import common
+from odoo.tests import common, tagged
 
 
+@tagged("nice")
 class TestCreatePickingAndPutProductPackage(common.TransactionCase):
     def setUp(self):
         super().setUp()
@@ -32,35 +33,33 @@ class TestCreatePickingAndPutProductPackage(common.TransactionCase):
         self.product3 = self.env["product.product"].create(
             {"name": "Product3", "type": "product"}
         )
-        self.line_ids = (
-            [
-                (
-                    0,
-                    0,
-                    {
-                        "product_id": self.product.id,
-                        "qty_done": 1,
-                    },
-                ),
-                (
-                    0,
-                    0,
-                    {
-                        "product_id": self.product2.id,
-                        "qty_done": 1,
-                    },
-                ),
-                (
-                    0,
-                    0,
-                    {
-                        "product_id": self.product3.id,
-                        "qty_done": 1,
-                        "serial": "1234567890",
-                    },
-                ),
-            ],
-        )
+        self.line_ids = [
+            (
+                0,
+                0,
+                {
+                    "product_id": self.product.id,
+                    "qty_done": 1,
+                },
+            ),
+            (
+                0,
+                0,
+                {
+                    "product_id": self.product2.id,
+                    "qty_done": 1,
+                },
+            ),
+            (
+                0,
+                0,
+                {
+                    "product_id": self.product3.id,
+                    "qty_done": 1,
+                    "serial": "1234567890",
+                },
+            ),
+        ]
 
     def test_create_picking_and_put_product_a_package(self):
         wizard = self.wizard.create(
@@ -79,7 +78,8 @@ class TestCreatePickingAndPutProductPackage(common.TransactionCase):
         self.assertEqual(wizard.line_ids[0].serial, False)
         self.assertEqual(wizard.line_ids[1].serial, False)
         self.assertEqual(wizard.line_ids[2].serial, "1234567890")
-        picking = wizard.action_create_picking()
+        action_data = wizard.action_create_picking()
+        picking = self.stock_picking.browse(action_data["res_id"])
         self.assertEqual(picking.picking_type_id, self.stock_picking_type_pack)
         self.assertEqual(
             picking.location_id, self.stock_picking_type_pack.default_location_src_id
@@ -112,7 +112,8 @@ class TestCreatePickingAndPutProductPackage(common.TransactionCase):
         self.assertEqual(wizard.line_ids[0].serial, False)
         self.assertEqual(wizard.line_ids[1].serial, False)
         self.assertEqual(wizard.line_ids[2].serial, "1234567890")
-        picking = wizard.action_create_picking()
+        action_data = wizard.action_create_picking()
+        picking = self.stock_picking.browse(action_data["res_id"])
         self.assertEqual(picking.picking_type_id, self.stock_picking_type_pack)
         self.assertEqual(
             picking.location_id, self.stock_picking_type_pack.default_location_src_id
@@ -123,7 +124,7 @@ class TestCreatePickingAndPutProductPackage(common.TransactionCase):
         )
         self.assertEqual(picking.owner_id, self.env.user.partner_id)
         self.assertEqual(len(picking.move_line_ids), 3)
-        self.assertEqual(picking.package_level_ids.name, "Package")
+        self.assertEqual(picking.package_level_ids[0].package_id.name, "Package")
         self.assertEqual(len(picking.package_level_ids.move_line_ids), 3)
         self.assertEqual(
             picking.package_level_ids.move_line_ids[0].product_id, self.product
