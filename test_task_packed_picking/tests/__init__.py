@@ -1,0 +1,1 @@
+from . import test_create_picking_and_put_product_a_package
