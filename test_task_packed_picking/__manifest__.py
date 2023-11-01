@@ -7,7 +7,7 @@
     "category": "Test",
     "license": "LGPL-3",
     "depends": [
-        "base",
+        "sale_management",
         "stock",
     ],
     "data": [

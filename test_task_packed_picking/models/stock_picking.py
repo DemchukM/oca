@@ -90,23 +90,30 @@ class StockPicking(models.Model):
         stock_picking_id.action_confirm()
         stock_picking_id.action_set_quantities_to_reservation()
         if package_name:
-            package_id = self.env["stock.quant.package"].create(
-                {
-                    "name": package_name,
-                }
-            )
-            self.env["stock.package_level"].create(
-                {
-                    "package_id": package_id.id,
-                    "picking_id": stock_picking_id.id,
-                    "location_id": location_dest_id.id,
-                    "location_dest_id": location_dest_id.id,
-                    "move_line_ids": [(6, 0, stock_picking_id.move_line_ids.ids)],
-                    "company_id": stock_picking_id.company_id.id,
-                }
+            self.create_new_package(
+                stock_picking_id, package_name, location, location_dest_id
             )
         else:
             stock_picking_id.action_put_in_pack()
         if set_ready:
             stock_picking_id.button_validate()
         return stock_picking_id
+
+    def create_new_package(
+        self, stock_picking_id, package_name, location_id, location_dest_id
+    ):
+        package_id = self.env["stock.quant.package"].create(
+            {
+                "name": package_name,
+            }
+        )
+        self.env["stock.package_level"].create(
+            {
+                "package_id": package_id.id,
+                "picking_id": stock_picking_id.id,
+                "location_id": location_id.id,
+                "location_dest_id": location_dest_id.id,
+                "move_line_ids": [(6, 0, stock_picking_id.move_line_ids.ids)],
+                "company_id": stock_picking_id.company_id.id,
+            }
+        )
